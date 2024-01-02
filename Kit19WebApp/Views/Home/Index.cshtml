@@ -1,0 +1,209 @@
+﻿@using Kit19WebApp.Models
+@model IEnumerable<Kit19WebApp.Models.Product>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Product Details</h2>
+@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+{
+    <div class="row mt-2">
+        <div class="col-md-10">
+            Select Search Criteria:
+            <input type="checkbox" name="searchCriteria" onclick="showMe(this)" value="ProductName" />ProductName
+
+            <input type="checkbox" name="searchCriteria" onclick="showMe(this)" value="Size" />Size
+
+            <input type="checkbox" name="searchCriteria" onclick="showMe(this)" value="Price" />Price
+
+            <input type="checkbox" name="searchCriteria" onclick="showMe(this)" value="MfgDate" />MfgDate
+
+            <input type="checkbox" name="searchCriteria" onclick="showMe(this)" value="Category" />Category
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-10" id="test">
+
+            </div>
+            </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-4" id="divProductName" style = "display:none">
+                    @Html.DisplayNameFor(model => model.ProductName)
+                    @Html.TextBox("ProductName", "", new { @class = "form-control", visible = false })
+
+                    @Html.ValidationMessage("ProductName", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-4" id="divSize" style = "display:none">
+                    @Html.DisplayNameFor(model => model.Size)
+                    @Html.DropDownList("Size", new List<SelectListItem> {
+            new SelectListItem { Text = "L", Value="L" },
+            new SelectListItem { Text = "M", Value="M" },
+            new SelectListItem { Text = "S", Value="S" },
+            }, "Select Size", new { @class = "form-control", visible = false })
+
+                    @Html.ValidationMessage("Size", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-4" id="divPrice" style = "display:none">
+                    @Html.DisplayNameFor(model => model.Price)
+                    @Html.DropDownList("Price", new List<SelectListItem> {
+            new SelectListItem { Text = "100", Value="100" },
+            new SelectListItem { Text = "500", Value="500" },
+            new SelectListItem { Text = "250", Value="250" },
+            }, "Select Price", new { @class = "form-control" })
+                    @Html.ValidationMessage("Price", new { @class = "text-danger", visible = false })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-4" style="display:none" id="divMfgDate">
+                    @Html.DisplayNameFor(model => model.MfgDate)
+                    @Html.TextBox("MfgDate", "", new { @class = "form-control" })
+
+                    @Html.ValidationMessage("MfgDate", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-4" style="display:none" id="divCategory">
+                    @Html.DisplayNameFor(model => model.Category)
+                    @Html.DropDownList("Category", new List<SelectListItem> {
+                   new SelectListItem { Text = "Standard", Value="Standard" },
+                   new SelectListItem { Text = "Premium", Value="Premium" },
+                   new SelectListItem { Text = "Economy", Value="Economy" },
+               }, "Select Category", new { @class = "form-control" })
+
+                    @Html.ValidationMessage("Category", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-4" style="display:none" id="divOperator">
+                    Select Conjuction Operator:
+                    @Html.DropDownList("Operator", new List<SelectListItem> {
+                   new SelectListItem { Text = "AND", Value="and" },
+                   new SelectListItem { Text = "OR", Value="or" }
+               }, "Select Operator", new { @class = "form-control" })
+
+                    @Html.ValidationMessage("Operator", new { @class = "text-danger" })
+                </div>
+
+            </div>
+            <div class="row mt-2 mb-2">
+                <div class="col">
+                    <input type="submit" value="Search Product" class="btn btn-primary" id="btnSearchProduct" style="display:none" />
+
+                </div>
+
+            </div>
+            }
+            @if (Model != null)
+            {
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ProductName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Size)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Price)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.MfgDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Category)
+                        </th>
+
+                    </tr>
+
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ProductName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Size)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Price)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.MfgDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Category)
+                            </td>
+
+                        </tr>
+                    }
+
+
+                </table>
+            }
+
+            <script type="text/javascript">
+                
+                function showMe(box) {
+                    var checkedCount = showHideFilters();
+
+                    var showSubmitBtn = (checkedCount >= 1) ? "block" : "none";
+                    var showOperator = (checkedCount >= 2) ? "block" : "none";
+                    document.getElementById("divOperator").style.display = showOperator;
+                    document.getElementById("btnSearchProduct").style.display = showSubmitBtn;
+                }
+
+                function showHideFilters() {
+                    var searchCriteria = $('input[type="checkbox"]:checked');
+                    var result = 0;
+                    if (searchCriteria.length > 0) {
+                        result = searchCriteria.length;
+                        searchCriteria.each(function () {
+                            if ($(this).val() == "ProductName") {
+                                $('#divProductName').css("display", "block");
+                            }
+                            if ($(this).val() == "Size") {
+                                $('#divSize').css("display", "block");
+                            }
+                            if ($(this).val() == "Price") {
+                                $('#divPrice').css("display", "block");
+                            }
+                            if ($(this).val() == "MfgDate") {
+                                $('#divMfgDate').css("display", "block");
+                            }
+                            if ($(this).val() == "Category") {
+                                $('#divCategory').css("display", "block");
+                            }
+                            
+                        });
+                    }
+
+                    searchCriteria = $('input[type="checkbox"]:not(:checked)');
+                    
+                    if (searchCriteria.length > 0) {
+                        
+                        searchCriteria.each(function () {
+                            if ($(this).val() == "ProductName") {
+                                $('#divProductName').css("display", "none");
+                            }
+                            if ($(this).val() == "Size") {
+                                $('#divSize').css("display", "none");
+                            }
+                            if ($(this).val() == "Price") {
+                                $('#divPrice').css("display", "none");
+                            }
+                            if ($(this).val() == "MfgDate") {
+                                $('#divMfgDate').css("display", "none");
+                            }
+                            if ($(this).val() == "Category") {
+                                $('#divCategory').css("display", "none");
+                            }
+
+                        });
+                    }
+
+                    return result;
+                    
+                    
+                }
+               
+                
+            </script>
